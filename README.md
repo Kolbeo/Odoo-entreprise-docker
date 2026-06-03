@@ -1,6 +1,6 @@
 # Odoo Enterprise Docker Template
 
-This repository is a deployment template for running Odoo Enterprise with Docker Compose, Traefik, PostgreSQL, and `odoo-mailer`.
+This repository is a deployment template for running Odoo Enterprise with Docker Compose, Traefik, PostgreSQL, and [Odoo-Mailer](https://github.com/Kolbeo/Odoo-Mailer).
 
 ## Stack
 

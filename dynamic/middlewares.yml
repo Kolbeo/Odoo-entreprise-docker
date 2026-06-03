@@ -4,12 +4,13 @@ http:
       headers:
         browserXssFilter: true
         contentTypeNosniff: true
-        frameDeny: true
         sslRedirect: true
         stsIncludeSubdomains: true
         stsPreload: true
         stsSeconds: 31536000
         referrerPolicy: "strict-origin-when-cross-origin"
+        customRequestHeaders:
+          X-Forwarded-Proto: "https"
         customResponseHeaders:
           X-Robots-Tag: "none"
           X-Permitted-Cross-Domain-Policies: "none"
@@ -17,4 +18,4 @@ http:
     rate-limit:
       rateLimit:
         average: 100
-        burst: 50 
+        burst: 50

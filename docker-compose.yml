@@ -1,0 +1,62 @@
+services:
+  web:
+    image: odoo:19.0
+    depends_on:
+      - db
+    restart: unless-stopped
+    environment:
+      - HOST=${HOST}
+      - USER=${POSTGRES_USER}
+      - PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+      - ./custom-addons:/mnt/custom-addons
+  db:
+    image: postgres:15
+    restart: unless-stopped
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - odoo-db-data:/var/lib/postgresql/data/pgdata
+
+  odoo-mailer:
+    image: ghcr.io/kolbeo/odoo-mailer:1.1.0
+    restart: unless-stopped
+    ports:
+      - "25:25"
+    environment:
+      DOMAIN: ${EMAIL_DOMAIN}
+      ODOO_DB: ${ODOO_DB:-odoo}
+      ODOO_USERID: ${ODOO_USERID}
+      ODOO_PASSWORD: ${ODOO_API_KEY}
+      ODOO_HOST: web
+      ODOO_PORT: ${ODOO_PORT:-8069}
+      LOG_RAW_EMAIL: false
+      ODOO_PROTO: "http"
+      ODOO_DEBUG: false
+      ODOO_RETRY_STATUS: true
+  traefik:
+    image: traefik:v3
+    container_name: traefik
+    restart: unless-stopped
+    environment:
+      - ODOO_DOMAIN=${ODOO_DOMAIN}
+    command:
+      - --configFile=/etc/traefik/traefik.yml
+    ports:
+      - "80:80" # HTTP
+      - "443:443" # HTTPS
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./traefik.yml:/etc/traefik/traefik.yml:ro
+      - ./acme.json:/etc/traefik/acme.json
+      - ./dynamic:/etc/traefik/dynamic:ro
+
+volumes:
+  odoo-web-data:
+  odoo-db-data:

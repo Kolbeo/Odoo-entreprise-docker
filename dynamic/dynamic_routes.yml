@@ -1,0 +1,33 @@
+http:
+  routers:
+    client1-http:
+      rule: 'Host(`{{ env "ODOO_DOMAIN" }}`)'
+      service: odoo-http
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - secure-headers
+        - rate-limit
+
+    client1-longpolling:
+      rule: 'Host(`{{ env "ODOO_DOMAIN" }}`) && PathPrefix(`/websocket`)'
+      service: odoo-longpolling
+      entryPoints:
+        - websecure
+      tls:
+        certResolver: letsencrypt
+      middlewares:
+        - secure-headers
+        - rate-limit
+  services:
+    odoo-http:
+      loadBalancer:
+        servers:
+          - url: "http://web:8069"
+
+    odoo-longpolling:
+      loadBalancer:
+        servers:
+          - url: "http://web:8072"

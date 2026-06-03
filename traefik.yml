@@ -1,0 +1,30 @@
+entryPoints:
+  web:
+    address: ":80"
+    http:
+      redirections:
+        entryPoint:
+          to: websecure
+          scheme: https
+  websecure:
+    address: ":443"
+    http:
+      tls:
+        certResolver: letsencrypt
+        options: default
+
+providers:
+  #docker:
+  #  exposedByDefault: false
+  #  network: odoo-router-net
+  file:
+    directory: /etc/traefik/dynamic/
+    watch: true
+
+certificatesResolvers:
+  letsencrypt:
+    acme:
+      email: ${LETS_ENCRYPT_EMAIL}
+      storage: /etc/traefik/acme.json
+      httpChallenge:
+        entryPoint: web

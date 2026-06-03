@@ -1,0 +1,20 @@
+http:
+  middlewares:
+    secure-headers:
+      headers:
+        browserXssFilter: true
+        contentTypeNosniff: true
+        frameDeny: true
+        sslRedirect: true
+        stsIncludeSubdomains: true
+        stsPreload: true
+        stsSeconds: 31536000
+        referrerPolicy: "strict-origin-when-cross-origin"
+        customResponseHeaders:
+          X-Robots-Tag: "none"
+          X-Permitted-Cross-Domain-Policies: "none"
+
+    rate-limit:
+      rateLimit:
+        average: 100
+        burst: 50 

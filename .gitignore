@@ -1,0 +1,6 @@
+addons/
+custom-addons/
+acme.json
+
+.env
+.DS_Store
